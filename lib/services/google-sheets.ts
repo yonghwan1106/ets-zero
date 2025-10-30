@@ -70,7 +70,8 @@ export class GoogleSheetsService {
 
       return data
     } catch (error) {
-      console.error(`Error fetching rows from ${sheetName}:`, error)
+      // Fallback to mock data when Google Sheets is not available
+      console.warn(`Using mock data for ${sheetName} (Google Sheets not available)`)
       return this.getMockData<T>(sheetName)
     }
   }

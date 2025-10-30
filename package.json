@@ -20,6 +20,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.68.0",
     "@tailwindcss/postcss": "^4.1.16",
+    "dotenv": "^17.2.3",
     "googleapis": "^164.1.0",
     "next": "^16.0.1",
     "react": "^19.2.0",

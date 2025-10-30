@@ -1,5 +1,7 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { GoogleSheetsService } from '@/lib/services/google-sheets'
+import type { Vessel, Voyage } from '@/lib/types'
 
 async function getUser() {
   const cookieStore = await cookies()
@@ -17,8 +19,25 @@ async function getUser() {
   }
 }
 
+async function getDashboardData() {
+  const vessels = await GoogleSheetsService.getRows<Vessel>('Vessels')
+  const voyages = await GoogleSheetsService.getRows<Voyage>('Voyages')
+
+  // Calculate KPIs from real data
+  const inProgressVoyages = voyages.filter(v => v.status === 'in_progress')
+  const completedVoyages = voyages.filter(v => v.status === 'completed')
+
+  return {
+    vessels,
+    voyages,
+    inProgressVoyages,
+    completedVoyages,
+  }
+}
+
 export default async function DashboardPage() {
   const user = await getUser()
+  const { vessels, voyages, inProgressVoyages, completedVoyages } = await getDashboardData()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -53,35 +72,35 @@ export default async function DashboardPage() {
               <h3 className="text-sm font-medium text-gray-600">운항 중 선박</h3>
               <span className="text-2xl">🚢</span>
             </div>
-            <p className="text-3xl font-bold text-primary">3척</p>
+            <p className="text-3xl font-bold text-primary">{inProgressVoyages.length}척</p>
             <p className="text-xs text-gray-500 mt-2">실시간 모니터링</p>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-600">금월 TCO</h3>
-              <span className="text-2xl">💰</span>
+              <h3 className="text-sm font-medium text-gray-600">총 선박</h3>
+              <span className="text-2xl">⚓</span>
             </div>
-            <p className="text-3xl font-bold text-primary">$5.2M</p>
-            <p className="text-xs text-gray-500 mt-2">총 운항비용</p>
+            <p className="text-3xl font-bold text-primary">{vessels.length}척</p>
+            <p className="text-xs text-gray-500 mt-2">등록된 전체 선박</p>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-600">TCO 절감액</h3>
-              <span className="text-2xl">📉</span>
+              <h3 className="text-sm font-medium text-gray-600">완료된 항해</h3>
+              <span className="text-2xl">✅</span>
             </div>
-            <p className="text-3xl font-bold text-success">-$450K</p>
-            <p className="text-xs text-success mt-2">목표 대비 -8.7%</p>
+            <p className="text-3xl font-bold text-success">{completedVoyages.length}건</p>
+            <p className="text-xs text-success mt-2">성공적으로 완료</p>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-600">긴급 알림</h3>
-              <span className="text-2xl">🔔</span>
+              <h3 className="text-sm font-medium text-gray-600">전체 항해</h3>
+              <span className="text-2xl">🗺️</span>
             </div>
-            <p className="text-3xl font-bold text-warning">2건</p>
-            <p className="text-xs text-warning mt-2">조치 필요</p>
+            <p className="text-3xl font-bold text-primary">{voyages.length}건</p>
+            <p className="text-xs text-gray-500 mt-2">계획+진행+완료</p>
           </div>
         </div>
 
@@ -122,7 +141,7 @@ export default async function DashboardPage() {
             <div className="text-4xl mb-4">🚢</div>
             <h3 className="text-lg font-bold text-gray-900 mb-2">선박 관리</h3>
             <p className="text-sm text-gray-600 mb-4">
-              등록된 선박 5척의 정보를 확인하세요
+              등록된 선박 {vessels.length}척의 정보를 확인하세요
             </p>
             <p className="text-sm text-primary font-medium">바로가기 →</p>
           </div>
@@ -131,7 +150,7 @@ export default async function DashboardPage() {
             <div className="text-4xl mb-4">📊</div>
             <h3 className="text-lg font-bold text-gray-900 mb-2">운항 현황</h3>
             <p className="text-sm text-gray-600 mb-4">
-              현재 진행 중인 항해 3건을 모니터링하세요
+              현재 진행 중인 항해 {inProgressVoyages.length}건을 모니터링하세요
             </p>
             <p className="text-sm text-primary font-medium">바로가기 →</p>
           </div>

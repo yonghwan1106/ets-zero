@@ -1,5 +1,6 @@
 import { GoogleSheetsService } from '@/lib/services/google-sheets'
 import type { Vessel, Voyage } from '@/lib/types'
+import Link from 'next/link'
 
 async function getVoyagesData() {
   const voyages = await GoogleSheetsService.getRows<Voyage>('Voyages')
@@ -119,7 +120,11 @@ export default async function VoyagesPage() {
                   return (
                     <tr key={voyage.voyage_id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{voyage.voyage_number}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          <Link href={`/voyages/${voyage.voyage_id}/monitor`} className="text-primary hover:text-primary/80 hover:underline">
+                            {voyage.voyage_number}
+                          </Link>
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{vessel?.vessel_name || 'Unknown'}</div>

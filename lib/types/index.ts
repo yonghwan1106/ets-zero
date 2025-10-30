@@ -39,6 +39,7 @@ export interface Voyage {
   arrival_port_code: string
   arrival_lat: number
   arrival_lon: number
+  distance_nm?: number // Optional: distance in nautical miles
   departure_time_planned: string
   arrival_time_planned: string
   departure_time_actual: string | null

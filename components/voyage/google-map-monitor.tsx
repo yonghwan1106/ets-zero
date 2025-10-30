@@ -158,24 +158,29 @@ export function GoogleMapMonitor({
 
       const maritimeRoute = getMaritimeRoute(departurePort.code, arrivalPort.code)
 
+      console.log('🗺️ Maritime route:', maritimeRoute)
+      console.log('🗺️ Route key:', `${departurePort.code}-${arrivalPort.code}`)
+
       // Planned route polyline (dashed) - full maritime route
-      new google.maps.Polyline({
+      const plannedPolyline = new google.maps.Polyline({
         path: maritimeRoute,
         geodesic: true,
         strokeColor: '#00bcd4',
-        strokeOpacity: 0.6,
-        strokeWeight: 3,
+        strokeOpacity: 1.0,
+        strokeWeight: 4,
         icons: [{
           icon: {
             path: 'M 0,-1 0,1',
             strokeOpacity: 1,
-            scale: 3,
+            scale: 4,
           },
           offset: '0',
           repeat: '20px',
         }],
         map: map,
       })
+
+      console.log('✅ Planned polyline created:', plannedPolyline)
 
       // Calculate current position along the maritime route based on progress
       const totalDuration = arrivalTime - departureTime
@@ -206,14 +211,19 @@ export function GoogleMapMonitor({
         actualRoutePath.push({ lat: actualCurrentLat, lng: actualCurrentLng })
       }
 
-      new google.maps.Polyline({
+      console.log('🗺️ Actual route path:', actualRoutePath)
+      console.log('🗺️ Progress:', progress, 'Segment:', segmentIndex)
+
+      const actualPolyline = new google.maps.Polyline({
         path: actualRoutePath,
         geodesic: true,
         strokeColor: '#4caf50',
-        strokeOpacity: 0.8,
-        strokeWeight: 4,
+        strokeOpacity: 1.0,
+        strokeWeight: 5,
         map: map,
       })
+
+      console.log('✅ Actual polyline created:', actualPolyline)
 
       // Current vessel position marker (use calculated position along maritime route)
       const marker = new google.maps.Marker({

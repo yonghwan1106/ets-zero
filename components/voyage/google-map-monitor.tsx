@@ -13,6 +13,8 @@ interface GoogleMapMonitorProps {
   arrivalPort: Port
   currentPosition: { lat: number; lng: number }
   vesselName: string
+  departureTime?: string
+  arrivalTime?: string
 }
 
 export function GoogleMapMonitor({
@@ -20,6 +22,8 @@ export function GoogleMapMonitor({
   arrivalPort,
   currentPosition,
   vesselName,
+  departureTime,
+  arrivalTime,
 }: GoogleMapMonitorProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstance = useRef<any>(null)
@@ -41,8 +45,8 @@ export function GoogleMapMonitor({
 
       // Calculate time-based variables for route progress
       const now = Date.now()
-      const departureTime = new Date(2025, 10, 15, 9, 0).getTime() // Mock departure time
-      const arrivalTime = new Date(2025, 11, 9, 18, 0).getTime()   // Mock arrival time
+      const departureTimeMs = departureTime ? new Date(departureTime).getTime() : new Date(2025, 10, 15, 9, 0).getTime()
+      const arrivalTimeMs = arrivalTime ? new Date(arrivalTime).getTime() : new Date(2025, 11, 9, 18, 0).getTime()
 
       // Create map
       const google = (window as any).google
@@ -187,8 +191,8 @@ export function GoogleMapMonitor({
       })
 
       // Calculate current position along the maritime route based on progress
-      const totalDuration = arrivalTime - departureTime
-      const elapsed = now - departureTime
+      const totalDuration = arrivalTimeMs - departureTimeMs
+      const elapsed = now - departureTimeMs
       const progress = Math.min(Math.max(elapsed / totalDuration, 0), 1)
 
       // Find position along route segments
@@ -284,7 +288,7 @@ export function GoogleMapMonitor({
 
       return () => clearInterval(checkInterval)
     }
-  }, [departurePort, arrivalPort, currentPosition, vesselName])
+  }, [departurePort, arrivalPort, currentPosition, vesselName, departureTime, arrivalTime])
 
   // Update vessel marker position when currentPosition changes
   useEffect(() => {

@@ -121,6 +121,8 @@ export default async function VoyageMonitorPage({ params }: MonitorPageProps) {
               }}
               currentPosition={{ lat: currentLat, lng: currentLng }}
               vesselName={vessel?.vessel_name || 'Unknown'}
+              departureTime={voyage.departure_time_planned}
+              arrivalTime={voyage.arrival_time_planned}
             />
           </div>
 

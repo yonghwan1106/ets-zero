@@ -37,6 +37,40 @@ export class GoogleSheetsService {
   }
 
   /**
+   * Convert string values to appropriate types
+   */
+  private static parseValue(value: string | null | undefined, header: string): any {
+    if (value === null || value === undefined || value === '') {
+      return null
+    }
+
+    // Boolean fields
+    if (header === 'is_recommended' || header === 'action_required') {
+      return value === 'TRUE' || value === 'true' || value === '1'
+    }
+
+    // Numeric fields - check if the header suggests a number
+    const numericFields = [
+      'rpm', 'tonnage', 'deadweight', 'draft', 'emission_factor', 'year',
+      'lat', 'lon', 'latitude', 'longitude', 'distance', 'weight', 'speed',
+      'duration', 'hours', 'foc', 'tons', 'cost', 'usd', 'price', 'value',
+      'wind', 'wave', 'height'
+    ]
+
+    const isNumericField = numericFields.some(field =>
+      header.toLowerCase().includes(field)
+    )
+
+    if (isNumericField) {
+      const num = parseFloat(value)
+      return isNaN(num) ? value : num
+    }
+
+    // Return string as-is
+    return value
+  }
+
+  /**
    * Get all rows from a sheet
    */
   static async getRows<T>(sheetName: string): Promise<T[]> {
@@ -63,7 +97,7 @@ export class GoogleSheetsService {
       const data = rows.slice(1).map((row: any[]) => {
         const obj: any = {}
         headers.forEach((header: string, index: number) => {
-          obj[header] = row[index] || null
+          obj[header] = this.parseValue(row[index], header)
         })
         return obj as T
       })

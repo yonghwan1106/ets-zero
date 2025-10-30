@@ -124,19 +124,21 @@ export function GoogleMapMonitor({
           // Busan to LA (Pacific route)
           'KRPUS-USLA': [
             { lat: departurePort.coordinates.lat, lng: departurePort.coordinates.lng },
-            { lat: 38.0, lng: 145.0 },     // North Pacific
-            { lat: 40.0, lng: 165.0 },     // Mid Pacific
-            { lat: 38.0, lng: -155.0 },    // Hawaii approach
-            { lat: 35.0, lng: -125.0 },    // California approach
+            { lat: 35.5, lng: 140.0 },     // East of Japan
+            { lat: 36.0, lng: 160.0 },     // Mid Pacific 1
+            { lat: 35.0, lng: -175.0 },    // Mid Pacific 2
+            { lat: 34.0, lng: -140.0 },    // Mid Pacific 3
+            { lat: 33.5, lng: -120.0 },    // California approach
             { lat: arrivalPort.coordinates.lat, lng: arrivalPort.coordinates.lng },
           ],
           // Busan to LAX (same as USLA)
           'KRPUS-USLAX': [
             { lat: departurePort.coordinates.lat, lng: departurePort.coordinates.lng },
-            { lat: 38.0, lng: 145.0 },     // North Pacific
-            { lat: 40.0, lng: 165.0 },     // Mid Pacific
-            { lat: 38.0, lng: -155.0 },    // Hawaii approach
-            { lat: 35.0, lng: -125.0 },    // California approach
+            { lat: 35.5, lng: 140.0 },     // East of Japan
+            { lat: 36.0, lng: 160.0 },     // Mid Pacific 1
+            { lat: 35.0, lng: -175.0 },    // Mid Pacific 2
+            { lat: 34.0, lng: -140.0 },    // Mid Pacific 3
+            { lat: 33.5, lng: -120.0 },    // California approach
             { lat: arrivalPort.coordinates.lat, lng: arrivalPort.coordinates.lng },
           ],
           // Gwangyang to Singapore

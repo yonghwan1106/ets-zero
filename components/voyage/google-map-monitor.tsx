@@ -39,19 +39,20 @@ export function GoogleMapMonitor({
         return
       }
 
-      // Calculate center point between departure and arrival
-      const centerLat = (departurePort.coordinates.lat + arrivalPort.coordinates.lat) / 2
-      const centerLng = (departurePort.coordinates.lng + arrivalPort.coordinates.lng) / 2
+      // Use ship's current position as map center (calculated along route)
+      // Calculate rough estimate first
+      const roughCenterLat = (departurePort.coordinates.lat + arrivalPort.coordinates.lat) / 2
+      const roughCenterLng = (departurePort.coordinates.lng + arrivalPort.coordinates.lng) / 2
 
       // Calculate time-based variables for route progress
       const now = Date.now()
       const departureTimeMs = departureTime ? new Date(departureTime).getTime() : new Date(2025, 10, 15, 9, 0).getTime()
       const arrivalTimeMs = arrivalTime ? new Date(arrivalTime).getTime() : new Date(2025, 11, 9, 18, 0).getTime()
 
-      // Create map
+      // Create map with rough center (will adjust bounds later)
       const google = (window as any).google
       const map = new google.maps.Map(mapRef.current!, {
-        center: { lat: centerLat, lng: centerLng },
+        center: { lat: roughCenterLat, lng: roughCenterLng },
         zoom: 3,
         mapTypeId: 'terrain',
         mapTypeControl: true,
@@ -61,7 +62,11 @@ export function GoogleMapMonitor({
 
       mapInstance.current = map
 
+      // Create bounds to fit all markers
+      const bounds = new google.maps.LatLngBounds()
+
       // Departure port marker
+      bounds.extend({ lat: departurePort.coordinates.lat, lng: departurePort.coordinates.lng })
       new google.maps.Marker({
         position: { lat: departurePort.coordinates.lat, lng: departurePort.coordinates.lng },
         map: map,
@@ -83,6 +88,7 @@ export function GoogleMapMonitor({
       })
 
       // Arrival port marker
+      bounds.extend({ lat: arrivalPort.coordinates.lat, lng: arrivalPort.coordinates.lng })
       new google.maps.Marker({
         position: { lat: arrivalPort.coordinates.lat, lng: arrivalPort.coordinates.lng },
         map: map,
@@ -256,6 +262,14 @@ export function GoogleMapMonitor({
 
       vesselMarker.current = marker
 
+      // Add ship position to bounds
+      bounds.extend({ lat: actualCurrentLat, lng: actualCurrentLng })
+
+      // Fit map to bounds with some padding
+      map.fitBounds(bounds, {
+        padding: { top: 100, right: 100, bottom: 100, left: 100 }
+      })
+
       // Info window
       const info = new google.maps.InfoWindow({
         content: `
@@ -290,17 +304,7 @@ export function GoogleMapMonitor({
 
       return () => clearInterval(checkInterval)
     }
-  }, [departurePort, arrivalPort, currentPosition, vesselName, departureTime, arrivalTime])
-
-  // Update vessel marker position when currentPosition changes
-  useEffect(() => {
-    if (vesselMarker.current) {
-      vesselMarker.current.setPosition({
-        lat: currentPosition.lat,
-        lng: currentPosition.lng,
-      })
-    }
-  }, [currentPosition])
+  }, [departurePort, arrivalPort, vesselName, departureTime, arrivalTime])
 
   return (
     <div className="relative">

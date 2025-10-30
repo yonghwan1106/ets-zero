@@ -151,9 +151,9 @@ async function addSampleData() {
       '기상 악화로 인해 ETA가 4시간 지연될 것으로 예상됩니다.',
       'TRUE',
       '도착 터미널에 지연 사실을 통보하고, 속도를 15.5 RPM로 높여 지연을 2시간으로 단축할 수 있습니다.',
-      new Date(now.getTime() - 18 * 3600000).toISOString(),
-      new Date(now.getTime() - 17 * 3600000).toISOString(),
-      '김영희',
+      new Date(now.getTime() - 1 * 3600000).toISOString(),
+      null,
+      null,
     ],
   ];
 

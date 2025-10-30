@@ -99,22 +99,64 @@ export function GoogleMapMonitor({
         },
       })
 
-      // Define realistic maritime route waypoints for Busan to Rotterdam
-      const maritimeRoute = [
-        { lat: departurePort.coordinates.lat, lng: departurePort.coordinates.lng }, // Busan
-        { lat: 1.3, lng: 103.8 },      // Singapore Strait
-        { lat: 1.5, lng: 100.5 },      // Malacca Strait
-        { lat: 6.0, lng: 80.0 },       // Sri Lanka
-        { lat: 12.5, lng: 43.3 },      // Gulf of Aden
-        { lat: 12.6, lng: 43.4 },      // Red Sea entrance
-        { lat: 30.0, lng: 32.5 },      // Suez Canal
-        { lat: 31.5, lng: 32.3 },      // Port Said
-        { lat: 35.0, lng: 18.0 },      // Mediterranean
-        { lat: 36.5, lng: 3.0 },       // Gibraltar approach
-        { lat: 43.0, lng: -5.0 },      // Bay of Biscay
-        { lat: 48.5, lng: 0.0 },       // English Channel approach
-        { lat: arrivalPort.coordinates.lat, lng: arrivalPort.coordinates.lng }, // Rotterdam
-      ]
+      // Generate maritime route based on departure and arrival ports
+      const getMaritimeRoute = (depCode: string, arrCode: string) => {
+        const routes: Record<string, any[]> = {
+          // Busan to Rotterdam (via Suez)
+          'KRPUS-NLRTM': [
+            { lat: departurePort.coordinates.lat, lng: departurePort.coordinates.lng },
+            { lat: 1.3, lng: 103.8 },      // Singapore Strait
+            { lat: 1.5, lng: 100.5 },      // Malacca Strait
+            { lat: 6.0, lng: 80.0 },       // Sri Lanka
+            { lat: 12.5, lng: 43.3 },      // Gulf of Aden
+            { lat: 12.6, lng: 43.4 },      // Red Sea
+            { lat: 30.0, lng: 32.5 },      // Suez Canal
+            { lat: 35.0, lng: 18.0 },      // Mediterranean
+            { lat: 36.5, lng: 3.0 },       // Gibraltar approach
+            { lat: 43.0, lng: -5.0 },      // Bay of Biscay
+            { lat: 48.5, lng: 0.0 },       // English Channel
+            { lat: arrivalPort.coordinates.lat, lng: arrivalPort.coordinates.lng },
+          ],
+          // Busan to LA (Pacific route)
+          'KRPUS-USLA': [
+            { lat: departurePort.coordinates.lat, lng: departurePort.coordinates.lng },
+            { lat: 38.0, lng: 145.0 },     // North Pacific
+            { lat: 40.0, lng: 165.0 },     // Mid Pacific
+            { lat: 38.0, lng: -155.0 },    // Hawaii approach
+            { lat: 35.0, lng: -125.0 },    // California approach
+            { lat: arrivalPort.coordinates.lat, lng: arrivalPort.coordinates.lng },
+          ],
+          // Gwangyang to Singapore
+          'KRKWG-SGSIN': [
+            { lat: departurePort.coordinates.lat, lng: departurePort.coordinates.lng },
+            { lat: 20.0, lng: 120.0 },     // Taiwan Strait
+            { lat: 12.0, lng: 115.0 },     // South China Sea
+            { lat: 5.0, lng: 108.0 },      // Borneo
+            { lat: arrivalPort.coordinates.lat, lng: arrivalPort.coordinates.lng },
+          ],
+          // Ulsan to Hong Kong
+          'KRUSN-HKHKG': [
+            { lat: departurePort.coordinates.lat, lng: departurePort.coordinates.lng },
+            { lat: 30.0, lng: 125.0 },     // East China Sea
+            { lat: 25.0, lng: 120.0 },     // Taiwan Strait
+            { lat: arrivalPort.coordinates.lat, lng: arrivalPort.coordinates.lng },
+          ],
+          // Incheon to Shanghai
+          'KRINC-CNSHA': [
+            { lat: departurePort.coordinates.lat, lng: departurePort.coordinates.lng },
+            { lat: 35.0, lng: 124.0 },     // Yellow Sea
+            { lat: arrivalPort.coordinates.lat, lng: arrivalPort.coordinates.lng },
+          ],
+        }
+
+        const key = `${depCode}-${arrCode}`
+        return routes[key] || [
+          { lat: departurePort.coordinates.lat, lng: departurePort.coordinates.lng },
+          { lat: arrivalPort.coordinates.lat, lng: arrivalPort.coordinates.lng },
+        ]
+      }
+
+      const maritimeRoute = getMaritimeRoute(departurePort.code, arrivalPort.code)
 
       // Planned route polyline (dashed) - full maritime route
       new google.maps.Polyline({
@@ -245,7 +287,7 @@ export function GoogleMapMonitor({
   return (
     <div className="relative">
       <div ref={mapRef} className="w-full h-[500px] rounded-lg" />
-      <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg p-4 max-w-xs">
+      <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg p-4 max-w-xs">
         <h3 className="font-bold text-gray-900 mb-2">항로 정보</h3>
         <div className="space-y-2 text-sm">
           <div className="flex items-center gap-2">

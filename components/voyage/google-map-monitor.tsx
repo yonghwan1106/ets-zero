@@ -126,6 +126,15 @@ export function GoogleMapMonitor({
             { lat: 35.0, lng: -125.0 },    // California approach
             { lat: arrivalPort.coordinates.lat, lng: arrivalPort.coordinates.lng },
           ],
+          // Busan to LAX (same as USLA)
+          'KRPUS-USLAX': [
+            { lat: departurePort.coordinates.lat, lng: departurePort.coordinates.lng },
+            { lat: 38.0, lng: 145.0 },     // North Pacific
+            { lat: 40.0, lng: 165.0 },     // Mid Pacific
+            { lat: 38.0, lng: -155.0 },    // Hawaii approach
+            { lat: 35.0, lng: -125.0 },    // California approach
+            { lat: arrivalPort.coordinates.lat, lng: arrivalPort.coordinates.lng },
+          ],
           // Gwangyang to Singapore
           'KRKWG-SGSIN': [
             { lat: departurePort.coordinates.lat, lng: departurePort.coordinates.lng },

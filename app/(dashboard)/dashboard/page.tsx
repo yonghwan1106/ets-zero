@@ -76,37 +76,6 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Welcome Section */}
-        <div className="bg-gradient-to-r from-primary to-secondary rounded-2xl shadow-lg p-8 text-white mb-8">
-          <h2 className="text-3xl font-bold mb-4">
-            환영합니다, {user.name} 부장님! 👋
-          </h2>
-          <p className="text-white/90 text-lg mb-6">
-            ETS-Zero 데모 버전에 오신 것을 환영합니다.
-            실시간 탄소배출권 가격을 반영한 AI 운항 최적화를 경험해보세요.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <h3 className="font-semibold mb-2">📋 운항 계획 수립</h3>
-              <p className="text-sm text-white/80">
-                3가지 최적화 옵션을 AI가 제안합니다
-              </p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <h3 className="font-semibold mb-2">📍 실시간 모니터링</h3>
-              <p className="text-sm text-white/80">
-                선박 위치와 TCO를 실시간으로 추적합니다
-              </p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <h3 className="font-semibold mb-2">🔮 What-if 시뮬레이션</h3>
-              <p className="text-sm text-white/80">
-                시장 변동 시나리오를 분석합니다
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">

@@ -39,6 +39,11 @@ export function GoogleMapMonitor({
       const centerLat = (departurePort.coordinates.lat + arrivalPort.coordinates.lat) / 2
       const centerLng = (departurePort.coordinates.lng + arrivalPort.coordinates.lng) / 2
 
+      // Calculate time-based variables for route progress
+      const now = Date.now()
+      const departureTime = new Date(2025, 10, 15, 9, 0).getTime() // Mock departure time
+      const arrivalTime = new Date(2025, 11, 9, 18, 0).getTime()   // Mock arrival time
+
       // Create map
       const google = (window as any).google
       const map = new google.maps.Map(mapRef.current!, {
@@ -94,12 +99,26 @@ export function GoogleMapMonitor({
         },
       })
 
-      // Planned route polyline (dashed)
+      // Define realistic maritime route waypoints for Busan to Rotterdam
+      const maritimeRoute = [
+        { lat: departurePort.coordinates.lat, lng: departurePort.coordinates.lng }, // Busan
+        { lat: 1.3, lng: 103.8 },      // Singapore Strait
+        { lat: 1.5, lng: 100.5 },      // Malacca Strait
+        { lat: 6.0, lng: 80.0 },       // Sri Lanka
+        { lat: 12.5, lng: 43.3 },      // Gulf of Aden
+        { lat: 12.6, lng: 43.4 },      // Red Sea entrance
+        { lat: 30.0, lng: 32.5 },      // Suez Canal
+        { lat: 31.5, lng: 32.3 },      // Port Said
+        { lat: 35.0, lng: 18.0 },      // Mediterranean
+        { lat: 36.5, lng: 3.0 },       // Gibraltar approach
+        { lat: 43.0, lng: -5.0 },      // Bay of Biscay
+        { lat: 48.5, lng: 0.0 },       // English Channel approach
+        { lat: arrivalPort.coordinates.lat, lng: arrivalPort.coordinates.lng }, // Rotterdam
+      ]
+
+      // Planned route polyline (dashed) - full maritime route
       new google.maps.Polyline({
-        path: [
-          { lat: departurePort.coordinates.lat, lng: departurePort.coordinates.lng },
-          { lat: arrivalPort.coordinates.lat, lng: arrivalPort.coordinates.lng },
-        ],
+        path: maritimeRoute,
         geodesic: true,
         strokeColor: '#00bcd4',
         strokeOpacity: 0.6,
@@ -116,12 +135,37 @@ export function GoogleMapMonitor({
         map: map,
       })
 
-      // Actual route polyline (solid)
+      // Calculate current position along the maritime route based on progress
+      const totalDuration = arrivalTime - departureTime
+      const elapsed = now - departureTime
+      const progress = Math.min(Math.max(elapsed / totalDuration, 0), 1)
+
+      // Find position along route segments
+      const segmentProgress = progress * (maritimeRoute.length - 1)
+      const segmentIndex = Math.floor(segmentProgress)
+      const segmentRatio = segmentProgress - segmentIndex
+
+      let actualCurrentLat = currentPosition.lat
+      let actualCurrentLng = currentPosition.lng
+
+      if (segmentIndex < maritimeRoute.length - 1) {
+        const start = maritimeRoute[segmentIndex]
+        const end = maritimeRoute[segmentIndex + 1]
+        actualCurrentLat = start.lat + (end.lat - start.lat) * segmentRatio
+        actualCurrentLng = start.lng + (end.lng - start.lng) * segmentRatio
+      }
+
+      // Actual route polyline (solid) - from start to current position
+      const actualRoutePath = []
+      for (let i = 0; i <= segmentIndex && i < maritimeRoute.length; i++) {
+        actualRoutePath.push(maritimeRoute[i])
+      }
+      if (segmentIndex < maritimeRoute.length - 1) {
+        actualRoutePath.push({ lat: actualCurrentLat, lng: actualCurrentLng })
+      }
+
       new google.maps.Polyline({
-        path: [
-          { lat: departurePort.coordinates.lat, lng: departurePort.coordinates.lng },
-          { lat: currentPosition.lat, lng: currentPosition.lng },
-        ],
+        path: actualRoutePath,
         geodesic: true,
         strokeColor: '#4caf50',
         strokeOpacity: 0.8,
@@ -129,9 +173,9 @@ export function GoogleMapMonitor({
         map: map,
       })
 
-      // Current vessel position marker
+      // Current vessel position marker (use calculated position along maritime route)
       const marker = new google.maps.Marker({
-        position: { lat: currentPosition.lat, lng: currentPosition.lng },
+        position: { lat: actualCurrentLat, lng: actualCurrentLng },
         map: map,
         title: vesselName,
         label: {
@@ -157,7 +201,7 @@ export function GoogleMapMonitor({
         content: `
           <div style="padding: 12px; min-width: 200px; font-family: Arial, sans-serif;">
             <h4 style="margin: 0 0 8px 0; font-weight: bold; color: #1a3a52;">${vesselName}</h4>
-            <p style="margin: 4px 0; font-size: 13px; color: #666;">현재 위치: ${currentPosition.lat.toFixed(4)}°N, ${currentPosition.lng.toFixed(4)}°E</p>
+            <p style="margin: 4px 0; font-size: 13px; color: #666;">현재 위치: ${actualCurrentLat.toFixed(4)}°N, ${actualCurrentLng.toFixed(4)}°E</p>
             <p style="margin: 4px 0; font-size: 13px; color: #666;">목적지: ${arrivalPort.name}</p>
           </div>
         `,

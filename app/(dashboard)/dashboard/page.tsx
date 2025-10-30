@@ -1,26 +1,8 @@
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { GoogleSheetsService } from '@/lib/services/google-sheets'
 import type { Vessel, Voyage } from '@/lib/types'
 import { VoyageStatusChart } from '@/components/dashboard/voyage-status-chart'
 import { VesselTypeChart } from '@/components/dashboard/vessel-type-chart'
-
-async function getUser() {
-  const cookieStore = await cookies()
-  const session = cookieStore.get('session')
-
-  if (!session) {
-    redirect('/login')
-  }
-
-  try {
-    const user = JSON.parse(Buffer.from(session.value, 'base64').toString())
-    return user
-  } catch {
-    redirect('/login')
-  }
-}
 
 async function getDashboardData() {
   const vessels = await GoogleSheetsService.getRows<Vessel>('Vessels')
@@ -49,33 +31,10 @@ async function getDashboardData() {
 }
 
 export default async function DashboardPage() {
-  const user = await getUser()
   const { vessels, voyages, inProgressVoyages, completedVoyages, plannedVoyages, containerVessels, bulkVessels, tankerVessels } = await getDashboardData()
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-primary">ETS-Zero</h1>
-              <p className="text-sm text-gray-600">실시간 AI 운항 최적화</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 px-3 py-1 bg-success/10 text-success rounded-full text-sm font-medium">
-                <span className="w-2 h-2 bg-success rounded-full"></span>
-                Demo Version
-              </div>
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                <p className="text-xs text-gray-500">{user.organization}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
+    <div>
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* KPI Cards */}

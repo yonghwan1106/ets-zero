@@ -1,6 +1,5 @@
 import { GoogleSheetsService } from '@/lib/services/google-sheets'
 import type { Vessel } from '@/lib/types'
-import Link from 'next/link'
 
 async function getVessels() {
   return await GoogleSheetsService.getRows<Vessel>('Vessels')
@@ -10,25 +9,7 @@ export default async function VesselsPage() {
   const vessels = await getVessels()
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-primary">선박 관리</h1>
-              <p className="text-sm text-gray-600">등록된 선박 목록 및 상세 정보</p>
-            </div>
-            <Link
-              href="/dashboard"
-              className="px-4 py-2 text-sm font-medium text-primary hover:bg-primary/5 rounded-lg transition-colors"
-            >
-              ← 대시보드로
-            </Link>
-          </div>
-        </div>
-      </header>
-
+    <div>
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Cards */}

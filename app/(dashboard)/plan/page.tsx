@@ -1,6 +1,5 @@
 import { GoogleSheetsService } from '@/lib/services/google-sheets'
 import type { Vessel, Voyage } from '@/lib/types'
-import Link from 'next/link'
 import { PlanForm } from '@/components/plan/plan-form'
 
 async function getPlanData() {
@@ -17,25 +16,7 @@ export default async function PlanPage() {
   const { vessels, plannedVoyages } = await getPlanData()
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-primary">운항 계획 수립</h1>
-              <p className="text-sm text-gray-600">AI 기반 최적 항해 계획 생성</p>
-            </div>
-            <Link
-              href="/dashboard"
-              className="px-4 py-2 text-sm font-medium text-primary hover:bg-primary/5 rounded-lg transition-colors"
-            >
-              ← 대시보드로
-            </Link>
-          </div>
-        </div>
-      </header>
-
+    <div>
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Info Section */}

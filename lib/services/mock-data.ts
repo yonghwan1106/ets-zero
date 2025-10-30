@@ -111,13 +111,14 @@ export const mockVoyages: Voyage[] = [
     arrival_port_code: 'NLRTM',
     arrival_lat: 51.9244,
     arrival_lon: 4.4777,
+    distance_nm: 11000,
     departure_time_planned: '2025-11-15T09:00:00Z',
     arrival_time_planned: '2025-12-09T18:00:00Z',
     departure_time_actual: null,
     arrival_time_actual: null,
     cargo_weight: 50000,
     status: 'planned',
-    selected_plan_id: null,
+    selected_plan_id: 'plan-001-c',
     created_at: '2025-10-15T14:00:00Z',
   },
   // In Progress
@@ -230,6 +231,71 @@ export const mockVoyages: Voyage[] = [
   },
 ]
 
+// Voyage Plans
+export const mockVoyagePlans: VoyagePlan[] = [
+  // voyage-001 plans
+  {
+    plan_id: 'plan-001-a',
+    voyage_id: 'voyage-001',
+    plan_type: 'min_fuel',
+    is_recommended: false,
+    recommended_rpm: 13.5,
+    estimated_duration_hours: 650,
+    estimated_foc_tons: 2100,
+    estimated_fuel_cost_usd: 1260000,
+    estimated_ets_cost_usd: 459900,
+    estimated_tco_usd: 1719900,
+    route_waypoints: JSON.stringify([
+      { lat: 35.1028, lon: 129.0403 },
+      { lat: 51.9244, lon: 4.4777 }
+    ]),
+    ai_explanation: '최저 연료 소비 전략입니다. RPM을 13.5로 유지하여 연료 소비를 최소화하지만 항해 시간이 가장 깁니다.',
+    market_ets_price: 70,
+    market_fuel_price: 600,
+    created_at: '2025-10-15T14:30:00Z',
+  },
+  {
+    plan_id: 'plan-001-b',
+    voyage_id: 'voyage-001',
+    plan_type: 'min_time',
+    is_recommended: false,
+    recommended_rpm: 16.0,
+    estimated_duration_hours: 540,
+    estimated_foc_tons: 2850,
+    estimated_fuel_cost_usd: 1710000,
+    estimated_ets_cost_usd: 623700,
+    estimated_tco_usd: 2333700,
+    route_waypoints: JSON.stringify([
+      { lat: 35.1028, lon: 129.0403 },
+      { lat: 51.9244, lon: 4.4777 }
+    ]),
+    ai_explanation: '최단 시간 전략입니다. RPM을 16.0으로 높여 가장 빠르게 도착하지만 연료 소비와 탄소배출이 증가합니다.',
+    market_ets_price: 70,
+    market_fuel_price: 600,
+    created_at: '2025-10-15T14:30:00Z',
+  },
+  {
+    plan_id: 'plan-001-c',
+    voyage_id: 'voyage-001',
+    plan_type: 'min_tco',
+    is_recommended: true,
+    recommended_rpm: 14.5,
+    estimated_duration_hours: 590,
+    estimated_foc_tons: 2400,
+    estimated_fuel_cost_usd: 1440000,
+    estimated_ets_cost_usd: 524160,
+    estimated_tco_usd: 1964160,
+    route_waypoints: JSON.stringify([
+      { lat: 35.1028, lon: 129.0403 },
+      { lat: 51.9244, lon: 4.4777 }
+    ]),
+    ai_explanation: '최적 TCO 전략입니다. 연료비와 탄소배출권 비용을 균형있게 고려하여 총 운항 비용을 최소화합니다. 현재 ETS 가격($70/톤)과 유가($600/톤)를 감안할 때 가장 경제적인 선택입니다.',
+    market_ets_price: 70,
+    market_fuel_price: 600,
+    created_at: '2025-10-15T14:30:00Z',
+  },
+]
+
 // Get mock data by sheet name
 export function getMockDataBySheet(sheetName: string): any[] {
   switch (sheetName) {
@@ -239,6 +305,8 @@ export function getMockDataBySheet(sheetName: string): any[] {
       return mockVessels
     case 'Voyages':
       return mockVoyages
+    case 'VoyagePlans':
+      return mockVoyagePlans
     default:
       return []
   }

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Noto_Sans_KR } from 'next/font/google'
+import Script from 'next/script'
 import './globals.css'
 
 const notoSansKR = Noto_Sans_KR({
@@ -20,6 +21,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
+      <head>
+        <Script
+          strategy="beforeInteractive"
+          src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID}`}
+        />
+      </head>
       <body className={notoSansKR.className}>{children}</body>
     </html>
   )

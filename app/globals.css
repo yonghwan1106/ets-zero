@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
-:root {
-  --primary: #1a3a52;
-  --secondary: #00bcd4;
-  --success: #4caf50;
-  --warning: #ff9800;
-  --error: #f44336;
+@theme {
+  --color-primary: #1a3a52;
+  --color-secondary: #00bcd4;
+  --color-success: #4caf50;
+  --color-warning: #ff9800;
+  --color-error: #f44336;
 }
 
 body {

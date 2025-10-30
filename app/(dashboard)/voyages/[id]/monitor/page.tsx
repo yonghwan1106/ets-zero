@@ -89,9 +89,11 @@ export default async function VoyageMonitorPage({ params }: MonitorPageProps) {
           <div className="flex gap-3">
             <Link
               href={`/voyages/${id}/simulate`}
-              className="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors"
+              className="px-6 py-3 bg-gradient-to-r from-secondary to-secondary/80 text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center gap-2 font-semibold"
             >
+              <span className="text-xl">🎯</span>
               What-if 시뮬레이션
+              <span className="text-white/80">→</span>
             </Link>
           </div>
         </div>

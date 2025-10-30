@@ -121,7 +121,8 @@ export default async function VoyagesPage() {
                     <tr key={voyage.voyage_id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
-                          <Link href={`/voyages/${voyage.voyage_id}/monitor`} className="text-primary hover:text-primary/80 hover:underline">
+                          <Link href={`/voyages/${voyage.voyage_id}/monitor`} className="text-primary hover:text-primary/80 hover:underline flex items-center gap-1">
+                            <span className="text-primary">→</span>
                             {voyage.voyage_number}
                           </Link>
                         </div>

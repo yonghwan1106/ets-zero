@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 
-export async function POST() {
+export async function POST(request: Request) {
   // 데모 계정 정보
   const demoUser = {
     user_id: 'user-001',
@@ -24,6 +24,7 @@ export async function POST() {
     path: '/',
   })
 
-  // 대시보드로 리다이렉트
-  return NextResponse.redirect(new URL('/dashboard', process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'))
+  // 대시보드로 리다이렉트 (요청의 origin을 사용)
+  const origin = request.headers.get('origin') || request.headers.get('referer')?.split('/').slice(0, 3).join('/') || 'http://localhost:3000'
+  return NextResponse.redirect(new URL('/dashboard', origin))
 }

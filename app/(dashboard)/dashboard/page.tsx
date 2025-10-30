@@ -189,14 +189,14 @@ export default async function DashboardPage() {
             <p className="text-sm text-primary font-medium">바로가기 →</p>
           </Link>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer">
-            <div className="text-4xl mb-4">📈</div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">리포트</h3>
+          <Link href="/plan" className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer">
+            <div className="text-4xl mb-4">🤖</div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">운항 계획</h3>
             <p className="text-sm text-gray-600 mb-4">
-              TCO 절감 실적과 분석 보고서를 확인하세요
+              AI가 최적의 항해 계획을 생성합니다
             </p>
             <p className="text-sm text-primary font-medium">바로가기 →</p>
-          </div>
+          </Link>
         </div>
       </main>
     </div>

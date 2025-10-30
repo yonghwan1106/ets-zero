@@ -7,11 +7,14 @@ interface VoyageMetricsProps {
   voyage: Voyage
   selectedPlan: VoyagePlan | undefined
   progress: number
+  tracking?: any[]
 }
 
-export function VoyageMetrics({ voyage, selectedPlan, progress }: VoyageMetricsProps) {
-  // Generate simulated tracking data
-  const trackingData = generateTrackingData(selectedPlan, progress)
+export function VoyageMetrics({ voyage, selectedPlan, progress, tracking }: VoyageMetricsProps) {
+  // Use real tracking data if available, otherwise generate simulated data
+  const trackingData = tracking && tracking.length > 0
+    ? formatTrackingData(tracking, selectedPlan)
+    : generateTrackingData(selectedPlan, progress)
 
   const budgetStatus = progress < 0.8 ? 'on_track' : 'warning'
 
@@ -194,4 +197,26 @@ function generateTrackingData(plan: VoyagePlan | undefined, progress: number) {
   }
 
   return data
+}
+
+function formatTrackingData(tracking: any[], plan: VoyagePlan | undefined) {
+  if (!tracking || tracking.length === 0 || !plan) return []
+
+  // Sort tracking data by timestamp
+  const sortedTracking = [...tracking].sort((a, b) =>
+    new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+  )
+
+  // Convert tracking data to chart format
+  return sortedTracking.map((record, index) => {
+    const hour = index * 6 // Assuming 6-hour intervals
+    const plannedTCO = plan.estimated_tco_usd * (hour / (plan.estimated_duration_hours || 500))
+
+    return {
+      hour,
+      planned: Math.round(plannedTCO),
+      actual: Math.round(record.tco_cumulative_usd || 0),
+      speed: record.speed_knots || 0,
+    }
+  })
 }

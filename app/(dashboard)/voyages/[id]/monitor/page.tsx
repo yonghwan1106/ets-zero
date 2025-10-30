@@ -23,7 +23,15 @@ async function getVoyageMonitorData(voyageId: string) {
   const plans = await GoogleSheetsService.getRows<VoyagePlan>('VoyagePlans')
   const selectedPlan = plans.find(p => p.plan_id === voyage.selected_plan_id)
 
-  return { voyage, vessel, selectedPlan }
+  // Get tracking data for this voyage
+  const allTracking = await GoogleSheetsService.getRows('VoyageTracking')
+  const tracking = allTracking.filter((t: any) => t.voyage_id === voyageId)
+
+  // Get alerts for this voyage
+  const allAlerts = await GoogleSheetsService.getRows('Alerts')
+  const alerts = allAlerts.filter((a: any) => a.voyage_id === voyageId && !a.acknowledged_at)
+
+  return { voyage, vessel, selectedPlan, tracking, alerts }
 }
 
 export default async function VoyageMonitorPage({ params }: MonitorPageProps) {
@@ -43,7 +51,7 @@ export default async function VoyageMonitorPage({ params }: MonitorPageProps) {
     )
   }
 
-  const { voyage, vessel, selectedPlan } = data
+  const { voyage, vessel, selectedPlan, tracking, alerts } = data
 
   // Calculate current status (simulated)
   const departureTime = new Date(voyage.departure_time_planned).getTime()
@@ -147,7 +155,56 @@ export default async function VoyageMonitorPage({ params }: MonitorPageProps) {
 
         {/* Right Column: Charts & Details (1/3 width) */}
         <div className="space-y-6">
-          <VoyageMetrics voyage={voyage} selectedPlan={selectedPlan} progress={progress} />
+          <VoyageMetrics
+            voyage={voyage}
+            selectedPlan={selectedPlan}
+            progress={progress}
+            tracking={tracking}
+          />
+
+          {/* Active Alerts */}
+          {alerts && alerts.length > 0 && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <h3 className="font-bold text-gray-900 mb-4">활성 알림</h3>
+              <div className="space-y-3">
+                {alerts.map((alert: any) => (
+                  <div
+                    key={alert.alert_id}
+                    className={`p-4 rounded-lg border-l-4 ${
+                      alert.severity === 'critical' ? 'bg-red-50 border-red-500' :
+                      alert.severity === 'warning' ? 'bg-yellow-50 border-yellow-500' :
+                      'bg-blue-50 border-blue-500'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="text-2xl">
+                        {alert.alert_type === 'ets_spike' ? '📈' :
+                         alert.alert_type === 'cost_overrun' ? '💰' :
+                         alert.alert_type === 'eta_delay' ? '⏰' :
+                         '⚠️'}
+                      </span>
+                      <div className="flex-1">
+                        <p className="font-semibold text-sm text-gray-900 mb-1">
+                          {alert.alert_type === 'ets_spike' ? 'ETS 가격 급등' :
+                           alert.alert_type === 'cost_overrun' ? '비용 초과' :
+                           alert.alert_type === 'eta_delay' ? 'ETA 지연' :
+                           alert.alert_type === 'weather_warning' ? '기상 경보' :
+                           '알림'}
+                        </p>
+                        <p className="text-xs text-gray-600 mb-2">{alert.message}</p>
+                        {alert.action_required && alert.recommended_action && (
+                          <div className="mt-2 pt-2 border-t border-gray-200">
+                            <p className="text-xs font-medium text-gray-700">💡 권장 조치:</p>
+                            <p className="text-xs text-gray-600 mt-1">{alert.recommended_action}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

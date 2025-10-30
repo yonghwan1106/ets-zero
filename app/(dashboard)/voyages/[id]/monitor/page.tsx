@@ -1,6 +1,6 @@
 import { GoogleSheetsService } from '@/lib/services/google-sheets'
 import type { Voyage, Vessel, VoyagePlan } from '@/lib/types'
-import { NaverMapMonitor } from '@/components/voyage/naver-map-monitor'
+import { GoogleMapMonitor } from '@/components/voyage/google-map-monitor'
 import { VoyageMetrics } from '@/components/voyage/voyage-metrics'
 import { ReoptimizationAlert } from '@/components/voyage/reoptimization-alert'
 import Link from 'next/link'
@@ -100,7 +100,7 @@ export default async function VoyageMonitorPage({ params }: MonitorPageProps) {
         <div className="lg:col-span-2 space-y-6">
           {/* Naver Maps */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <NaverMapMonitor
+            <GoogleMapMonitor
               departurePort={{
                 name: voyage.departure_port,
                 code: voyage.departure_port_code,
